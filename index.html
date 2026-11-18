@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#202a1d">
+<meta name="description" content="Dein persönlicher 24-Monats-Trainingsplan.">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Training Tracker</title>
+<style>
+:root{--bg:#11150f;--panel:#1b2218;--panel2:#252e20;--line:#3c4934;--text:#edf2e8;--muted:#aab59f;--green:#a6bd79;--green2:#526b3b;--orange:#d7a45b;--red:#d87968}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#263321 0,#11150f 55%);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;padding:0 0 36px}
+header{padding:24px 18px 18px;border-bottom:1px solid var(--line);background:#151c13eF;position:sticky;top:0;z-index:3;backdrop-filter:blur(12px)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--green);font-weight:800}.brand{font-size:25px;font-weight:900;letter-spacing:.02em;margin:3px 0 0}.tag{font-size:11px;border:1px solid var(--green2);color:var(--green);border-radius:5px;padding:5px 7px;font-weight:800;letter-spacing:.08em}
+main{max-width:760px;margin:auto;padding:18px 14px}.card{background:linear-gradient(145deg,var(--panel),#171d14);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px #0003}
+h2{font-size:16px;margin:0 0 12px;letter-spacing:.03em}h3{font-size:16px;margin:0 0 5px}.muted{color:var(--muted);font-size:13px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.stat{background:#11170f;border:1px solid var(--line);border-radius:9px;padding:10px}.stat b{font-size:22px;display:block;color:var(--green)}.stat span{font-size:11px;color:var(--muted)}
+.progress{height:9px;background:#0c100b;border-radius:99px;overflow:hidden;margin:9px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,#657f49,#b8cf87);transition:width .2s}
+.days{display:grid;gap:10px}.day{background:#171e14;border:1px solid var(--line);border-radius:11px;padding:13px}.day.done{border-color:#718d50;background:#1d2918}.dayhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.dayname{font-weight:850}.daytype{font-size:11px;color:var(--green);font-weight:800;letter-spacing:.08em}.check{accent-color:#9ebd70;width:20px;height:20px}.exercise{font-size:13px;color:#d5ddce;margin:8px 0 0;padding-left:18px}.exercise li{margin:3px 0}.note{font-size:12px;color:var(--muted);margin-top:9px}
+button,.btn{border:1px solid var(--green2);background:#2b3b22;color:var(--text);border-radius:8px;padding:10px 12px;font-weight:750;font-size:13px;cursor:pointer}button.secondary{background:#171e14;border-color:var(--line);color:var(--muted)}button:active{transform:scale(.98)}
+input,select{width:100%;background:#10160e;border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--text);font:inherit;margin-top:5px}label{font-size:12px;color:var(--muted);display:block;margin-top:10px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+details{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}summary{cursor:pointer;color:var(--green);font-weight:750;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+@media(min-width:620px){.days{grid-template-columns:1fr 1fr}.brand{font-size:29px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div><div class="eyebrow">PERSONAL FITNESS SYSTEM</div><div class="brand">TRAINING TRACKER</div></div><div class="tag">FIELD LOG / 24M</div></div></header>
+<main>
+<section class="card">
+ <div class="row"><div><div class="eyebrow">WOCHENÜBERSICHT</div><h2 id="weekTitle" style="margin:4px 0 0">Woche 1</h2></div><button class="secondary" id="resetWeek">Woche zurücksetzen</button></div>
+ <div class="progress"><div class="bar" id="weekBar"></div></div>
+ <div class="row"><span class="muted" id="weekText">0 von 4 Einheiten erledigt</span><b id="weekPct">0%</b></div>
+ <div class="stats">
+  <div class="stat"><b id="totalDone">0</b><span>Einheiten gesamt</span></div>
+  <div class="stat"><b id="streak">0</b><span>Diese Woche</span></div>
+  <div class="stat"><b id="month">01</b><span>Trainingsmonat</span></div>
+ </div>
+</section>
+<section class="card">
+ <div class="row"><h2>DEIN WOCHENPLAN</h2><span class="tag">4 TAGE</span></div>
+ <div class="days" id="days"></div>
+ <p class="note">Dienstag, Donnerstag und Sonntag: Erholung. Leichte Spaziergänge und lockere Mobilität sind optional.</p>
+</section>
+<section class="card">
+ <h2>FORTSCHRITT DOKUMENTIEREN</h2>
+ <div class="fields">
+  <div><label for="runDistance">Laufstrecke (km)</label><input id="runDistance" type="number" min="0" step=".1" placeholder="z. B. 1.5"></div>
+  <div><label for="runTime">Laufzeit (Min.)</label><input id="runTime" type="number" min="0" step="1" placeholder="z. B. 12"></div>
+  <div><label for="bodyweight">Körpergewicht (kg, optional)</label><input id="bodyweight" type="number" min="0" step=".1" placeholder="optional"></div>
+  <div><label for="sessionNote">Notiz</label><input id="sessionNote" type="text" placeholder="z. B. fühlte sich gut an"></div>
+ </div>
+ <button id="saveLog" style="margin-top:12px;width:100%">Eintrag speichern</button>
+ <div id="logList" class="muted" style="margin-top:10px">Noch keine Einträge.</div>
+</section>
+<section class="card">
+ <h2>24-MONATS-ENTWICKLUNG</h2>
+ <label for="monthSelect">Aktueller Trainingsmonat</label>
+ <input id="monthSelect" type="range" min="1" max="24" value="1">
+ <div class="row"><b id="phaseName">Monat 1–3 · Grundlagen</b><span id="monthNum" class="tag">MONAT 1</span></div>
+ <p id="phaseDesc" class="muted">Bewegungsabläufe lernen, Routine aufbauen und die Belastung langsam steigern.</p>
+ <div class="progress"><div class="bar" id="phaseBar"></div></div>
+ <details><summary>Alle 24 Monate anzeigen</summary><ul class="exercise">
+ <li>Monat 1–3: Grundlagen und Technik</li><li>Monat 4–6: Ausdauer behutsam erweitern</li><li>Monat 7–12: Auf einen lockeren 5-km-Lauf hinarbeiten</li><li>Monat 13–18: Ausdauer und Kraft stabilisieren</li><li>Monat 19–24: Je nach Entwicklung 5–10 km locker laufen können</li></ul><p class="note">Das sind flexible Orientierungsziele, keine Prüfungen oder Pflichttermine.</p></details>
+</section>
+<section class="card">
+ <h2>SICHER TRAINIEREN</h2>
+ <p class="muted">Du bist noch im Wachstum: Technik vor Gewicht, keine Maximalversuche und keine Crash-Diät. Bei Kraftübungen etwa 2–3 Wiederholungen „im Tank“ lassen. Steigere nur, wenn sich die aktuelle Belastung sauber und kontrolliert anfühlt.</p>
+ <p class="muted">Bei Schmerzen, Schwindel oder ungewöhnlicher Atemnot abbrechen. Schlaf und ausreichendes Essen gehören zum Trainingsplan dazu.</p>
+ <div class="row" style="margin-top:12px"><button class="secondary" id="export">Daten exportieren</button><button class="secondary" id="importBtn">Backup importieren</button><input type="file" id="importFile" accept="application/json" hidden></div>
+</section>
+<footer>TRAINING TRACKER · Daten bleiben lokal auf diesem Gerät gespeichert.</footer>
+</main>
+<script>
+const plan=[
+ {day:"Montag",type:"KRAFT A · OBERKÖRPER",items:["Brustpresse: 3 × 8–12","Latzug: 3 × 8–12","Sitzendes Kabelrudern: 2 × 10–12","Bizepscurls: 2 × 10–15","Trizepsdrücken: 2 × 10–15","Plank: 3 × 20–40 Sek."],note:"5–10 Min. aufwärmen. Liegestütze optional statt Brustpresse."},
+ {day:"Mittwoch",type:"CARDIO · LAUFEN/GEHEN",items:["5 Min. zügig gehen","6 Runden: 3 Min. locker joggen + 2 Min. gehen","5 Min. locker auslaufen/gehen"],note:"Tempo so wählen, dass du noch sprechen kannst. Bei Bedarf weniger Runden."},
+ {day:"Freitag",type:"KRAFT B · GANZKÖRPER",items:["Goblet Squat: 3 × 8–12","Beinpresse: 2 × 10–12","Rumänisches Kreuzheben leicht: 2 × 8–10","Schulterpresse: 2 × 8–12","Beinbeuger: 2 × 10–15","Wadenheben: 2 × 12–15","Dead Bug: 2 × 8 je Seite"],note:"Leicht starten und die Ausführung vom Studiopersonal zeigen lassen."},
+ {day:"Samstag",type:"LOCKERE AUSDAUER",items:["60–90 Min. Spaziergang/Wanderung ODER","20–30 Min. lockeres Radfahren oder Crosstrainer","5–10 Min. Mobilität"],note:"Eine längere, entspannte Einheit. Kein Wettkampf und kein Durchbeißen bei Erschöpfung."}
+];
+const key="trainingTrackerV1";
+let data=JSON.parse(localStorage.getItem(key)||'{"week":1,"completed":[],"total":0,"logs":[],"month":1}');
+function save(){localStorage.setItem(key,JSON.stringify(data));render()}
+function render(){
+ document.getElementById("weekTitle").textContent="Woche "+data.week;
+ const done=data.completed.length,pct=Math.round(done/4*100);
+ document.getElementById("weekBar").style.width=pct+"%";document.getElementById("weekText").textContent=done+" von 4 Einheiten erledigt";document.getElementById("weekPct").textContent=pct+"%";
+ document.getElementById("totalDone").textContent=data.total;document.getElementById("streak").textContent=done;document.getElementById("month").textContent=String(data.month).padStart(2,"0");
+ document.getElementById("days").innerHTML=plan.map((p,i)=>`<article class="day ${data.completed.includes(i)?"done":""}"><div class="dayhead"><div><div class="daytype">${p.type}</div><div class="dayname">${p.day}</div></div><input class="check" type="checkbox" aria-label="${p.day} erledigt" data-day="${i}" ${data.completed.includes(i)?"checked":""}></div><ul class="exercise">${p.items.map(x=>`<li>${x}</li>`).join("")}</ul><div class="note">${p.note}</div></article>`).join("");
+ document.querySelectorAll("[data-day]").forEach(c=>c.addEventListener("change",e=>{let n=+e.target.dataset.day;if(e.target.checked&&!data.completed.includes(n)){data.completed.push(n);data.total++}else if(!e.target.checked){data.completed=data.completed.filter(x=>x!==n);data.total=Math.max(0,data.total-1)}save()}));
+ const phases=[["Grundlagen","Bewegungsabläufe lernen, Routine aufbauen und die Belastung langsam steigern."],["Ausdauer erweitern","Lauf-/Gehintervalle langsam verlängern und Krafttechnik festigen."],["5-km-Orientierung","Schrittweise auf einen lockeren 5-km-Lauf hinarbeiten, ohne Tempozwang."],["Stabilisieren","Kraft und Ausdauer gleichmäßig weiterentwickeln und Erholung beachten."],["Langfristig fit bleiben","Je nach Entwicklung 5–10 km locker laufen können; kein Pflichtziel."]];
+ let m=data.month,idx=m<=3?0:m<=6?1:m<=12?2:m<=18?3:4;
+ document.getElementById("monthSelect").value=m;document.getElementById("monthNum").textContent="MONAT "+m;document.getElementById("phaseName").textContent="Monat "+(idx===0?"1–3":idx===1?"4–6":idx===2?"7–12":idx===3?"13–18":"19–24")+" · "+phases[idx][0];document.getElementById("phaseDesc").textContent=phases[idx][1];document.getElementById("phaseBar").style.width=(m/24*100)+"%";
+ document.getElementById("logList").innerHTML=data.logs.length?data.logs.slice(-5).reverse().map(l=>`<div style="padding:8px 0;border-top:1px solid var(--line)">${l.date}: ${l.distance?l.distance+" km":""} ${l.time?"· "+l.time+" Min.":""} ${l.weight?"· "+l.weight+" kg":""} ${l.note?"· "+escapeHtml(l.note):""}</div>`).join(""):"Noch keine Einträge.";
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+document.getElementById("resetWeek").onclick=()=>{if(confirm("Aktuelle Woche zurücksetzen? Die Gesamtzahl erledigter Einheiten bleibt erhalten.")){data.week++;data.completed=[];save()}};
+document.getElementById("monthSelect").oninput=e=>{data.month=+e.target.value;save()};
+document.getElementById("saveLog").onclick=()=>{let v=id=>document.getElementById(id).value.trim();data.logs.push({date:new Date().toLocaleDateString("de-DE"),distance:v("runDistance"),time:v("runTime"),weight:v("bodyweight"),note:v("sessionNote")});["runDistance","runTime","bodyweight","sessionNote"].forEach(id=>document.getElementById(id).value="");save()};
+document.getElementById("export").onclick=()=>{let a=document.createElement("a"),blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});a.href=URL.createObjectURL(blob);a.download="training-tracker-backup.json";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.completed)||!Array.isArray(d.logs))throw 0;data=d;save();alert("Backup importiert.")}catch{alert("Datei konnte nicht importiert werden.")}};
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+render();
+</script>
+</body></html>

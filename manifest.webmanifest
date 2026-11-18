@@ -1,0 +1,9 @@
+{
+  "name": "Training Tracker",
+  "short_name": "Training",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#11150f",
+  "theme_color": "#202a1d",
+  "description": "Dein persönlicher 24-Monats-Trainingsplan."
+}
